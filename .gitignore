@@ -1,4 +1,4 @@
-models/text2img-large/
+models/ldm/text2img-large/
 outputs/
 src/
 __pycache__/

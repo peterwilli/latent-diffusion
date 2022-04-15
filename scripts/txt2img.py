@@ -6,9 +6,11 @@ from PIL import Image
 from tqdm import tqdm, trange
 from einops import rearrange
 from torchvision.utils import make_grid
+from pytorch_lightning import seed_everything
 
 from ldm.util import instantiate_from_config
 from ldm.models.diffusion.ddim import DDIMSampler
+from ldm.models.diffusion.plms import PLMSSampler
 
 
 def load_model_from_config(config, ckpt, verbose=False):
@@ -55,6 +57,12 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--plms",
+        action='store_true',
+        help="use plms sampling",
+    )
+
+    parser.add_argument(
         "--ddim_eta",
         type=float,
         default=0.0,
@@ -94,6 +102,12 @@ if __name__ == "__main__":
         default=5.0,
         help="unconditional guidance scale: eps = eps(x, empty) + scale * (eps(x, cond) - eps(x, empty))",
     )
+    
+    parser.add_argument(
+        "--seed",
+        type=int,
+        help="seed for seed_everything",
+    )
     opt = parser.parse_args()
 
 
@@ -102,13 +116,20 @@ if __name__ == "__main__":
 
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     model = model.to(device)
-    sampler = DDIMSampler(model)
+
+    if opt.plms:
+        sampler = PLMSSampler(model)
+    else:
+        sampler = DDIMSampler(model)
 
     os.makedirs(opt.outdir, exist_ok=True)
     outpath = opt.outdir
 
     prompt = opt.prompt
-
+    
+    if not opt.seed:
+        opt.seed=(torch.initial_seed() % 2**32)
+    seed_everything(opt.seed)
 
     sample_path = os.path.join(outpath, "samples")
     os.makedirs(sample_path, exist_ok=True)
