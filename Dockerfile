@@ -20,6 +20,7 @@ ENV PATH="/opt/python-3.8.5/bin:${PATH}"
 RUN python3 -m pip install pip==20.3
 RUN pip3 install torch==1.10.1+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 RUN pip3 install numpy==1.19.2 torchvision==0.11.2 albumentations==0.4.3 opencv-python==4.1.2.30 pudb==2019.2 imageio==2.9.0 imageio-ffmpeg==0.4.2 pytorch-lightning==1.6.1 omegaconf==2.1.1 test-tube>=0.7.5 streamlit>=0.73.1 einops==0.3.0 torch-fidelity==0.3.0 transformers==4.3.1 -e "git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers" -e "git+https://github.com/openai/CLIP.git@main#egg=clip"
+RUN pip3 install bottle
 
 RUN mkdir -p /opt/ldm_package
 ADD ./setup.py /opt/ldm_package
