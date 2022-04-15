@@ -1,0 +1,5 @@
+models/text2img-large/
+outputs/
+src/
+__pycache__/
+*.egg-info
